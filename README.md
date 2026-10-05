@@ -5,10 +5,7 @@
 
 # Virtual Physiology Lab
 
-[![Live Demo](https://img.shields.io/badge/🔬_Live_Demo-Visit_Virtual_Lab-blue?style=for-the-badge)](https://mrnerd96.github.io/virtual-lab/)
-[![GitHub Pages](https://img.shields.io/badge/Deployed_on-GitHub_Pages-222?style=for-the-badge&logo=github)](https://mrnerd96.github.io/virtual-lab/)
-
-> **🌐 Try it now: [https://mrnerd96.github.io/virtual-lab/](https://mrnerd96.github.io/virtual-lab/)**
+> **🌐 Try it now: [https://madhukar-venkatesh.github.io/virtual-lab/](https://madhukar-venkatesh.github.io/virtual-lab/)**
 
 A comprehensive, interactive simulation suite designed for performing and visualizing physiological experiments in a virtual environment. This application leverages modern web technologies to provide realistic simulations of amphibian skeletal muscle, amphibian heart, and hematology experiments.
 
@@ -47,48 +44,3 @@ A comprehensive, interactive simulation suite designed for performing and visual
 *   **Charting**: Recharts
 *   **Mobile Runtime**: Capacitor
 *   **Icons**: Lucide React
-
-## 💻 Setup & Installation
-
-**Prerequisites:** Node.js (v18+ recommended)
-
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/madhukar-venkatesh/virtual-lab.git
-    cd virtual-lab
-    ```
-
-2.  **Install dependencies:**
-    ```bash
-    npm install
-    ```
-
-3.  **Set up environment variables:**
-    Create a `.env.local` file in the root directory and add any necessary API keys (e.g., for AI features if applicable).
-    ```env
-    VITE_GEMINI_API_KEY=your_api_key_here
-    ```
-
-4.  **Run the development server:**
-    ```bash
-    npm run dev
-    ```
-
-5.  **Build for production:**
-    ```bash
-    npm run build
-    ```
-
-## 📱 Mobile Build (Android)
-
-This project is configured with Capacitor for Android deployment.
-
-1.  **Sync the project:**
-    ```bash
-    npx cap sync
-    ```
-
-2.  **Open in Android Studio:**
-    ```bash
-    npx cap open android
-    ```
