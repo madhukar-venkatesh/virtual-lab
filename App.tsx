@@ -1948,265 +1948,31 @@ const GenesisOfTetanusExperiment: React.FC<{ onBack: () => void }> = ({ onBack }
 
 // --- FEEDBACK MODAL ---
 
-// ⚠️ GOOGLE FORMS SETUP INSTRUCTIONS:
-// 1. Create a Google Form with these fields:
-//    - Name (Short answer)
-//    - Email (Short answer)
-//    - Rating (Short answer - will receive 1-5)
-//    - Feedback (Paragraph)
-// 2. Get the form's pre-filled link by:
-//    a. Click 3 dots menu > Get pre-filled link
-//    b. Fill sample data and click "Get link"
-//    c. Copy the URL and replace GOOGLE_FORM_ACTION_URL below
-// 3. The URL looks like: https://docs.google.com/forms/d/e/FORM_ID/formResponse
-// 4. Find entry IDs from the prefilled URL (entry.XXXXXX) and update below
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!feedback.trim()) return setError('Please enter your feedback');
+  if (rating === 0) return setError('Please select a rating');
 
-const GOOGLE_FORM_CONFIG = {
-  // Virtual Physiology Lab Feedback Form
-  actionUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSdPY6VdSmNIAQ-6xvhhm1F-FrbzF0lbxpJL-m8YScMRBCfREg/formResponse',
-  fields: {
-    name: 'entry.150282487',
-    email: 'entry.797040518',
-    rating: 'entry.612197493',
-    feedback: 'entry.1421853862'
-  }
-};
+  setIsSubmitting(true);
+  setError('');
 
-interface FeedbackModalProps {
-  onClose: () => void;
-}
+  try {
+    const response = await fetch('https://formspree.io/f/xeaeqwev', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, rating, feedback })
+    });
 
-const FeedbackModal: React.FC<FeedbackModalProps> = ({ onClose }) => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [rating, setRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0);
-  const [feedback, setFeedback] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState('');
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!feedback.trim()) {
-      setError('Please enter your feedback');
-      return;
-    }
-
-    if (rating === 0) {
-      setError('Please select a rating');
-      return;
-    }
-
-    setIsSubmitting(true);
-    setError('');
-
-    // Check if Google Form is configured
-    if (GOOGLE_FORM_CONFIG.actionUrl === 'YOUR_GOOGLE_FORM_ACTION_URL_HERE') {
-      // Demo mode - just show success
-      await new Promise(resolve => setTimeout(resolve, 1000));
+    if (response.ok) {
       setSubmitted(true);
-      setIsSubmitting(false);
-      return;
+    } else {
+      setError('Failed to submit feedback.');
     }
-
-    try {
-      // Submit to Google Form using iframe method (avoids CORS)
-      const formData = new URLSearchParams();
-      formData.append(GOOGLE_FORM_CONFIG.fields.name, name);
-      formData.append(GOOGLE_FORM_CONFIG.fields.email, email);
-      formData.append(GOOGLE_FORM_CONFIG.fields.rating, rating.toString());
-      formData.append(GOOGLE_FORM_CONFIG.fields.feedback, feedback);
-
-      // Create hidden iframe for submission
-      const iframe = document.createElement('iframe');
-      iframe.name = 'feedback-iframe';
-      iframe.style.display = 'none';
-      document.body.appendChild(iframe);
-
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = GOOGLE_FORM_CONFIG.actionUrl;
-      form.target = 'feedback-iframe';
-
-      for (const [key, value] of formData.entries()) {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = value;
-        form.appendChild(input);
-      }
-
-      document.body.appendChild(form);
-      form.submit();
-
-      // Cleanup after submission
-      setTimeout(() => {
-        document.body.removeChild(form);
-        document.body.removeChild(iframe);
-      }, 1000);
-
-      setSubmitted(true);
-    } catch (err) {
-      setError('Failed to submit feedback. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  if (submitted) {
-    return (
-      <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-        <div className="bg-slate-900 p-8 rounded-2xl max-w-md w-full border border-slate-800 text-center">
-          <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Star className="w-8 h-8 text-green-400 fill-green-400" />
-          </div>
-          <h2 className="text-2xl font-bold text-white mb-2">Thank You!</h2>
-          <p className="text-slate-400 mb-6">Your feedback has been submitted successfully.</p>
-          <button
-            onClick={onClose}
-            className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl transition-colors"
-          >
-            Close
-          </button>
-        </div>
-      </div>
-    );
+  } catch (err) {
+    setError('Failed to submit feedback. Please try again.');
+  } finally {
+    setIsSubmitting(false);
   }
-
-  return (
-    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-      <div className="bg-slate-900 p-8 rounded-2xl max-w-lg w-full border border-slate-800 relative max-h-[90vh] overflow-y-auto">
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-slate-400 hover:text-white"
-        >
-          <X className="w-6 h-6" />
-        </button>
-
-        <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
-          <MessageCircle className="w-6 h-6 text-yellow-500" /> Send Feedback
-        </h2>
-        <p className="text-slate-400 text-sm mb-6">We'd love to hear your thoughts on Virtual Physiology Lab!</p>
-
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Name Field */}
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1.5">
-              Name <span className="text-slate-500">(optional)</span>
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50 focus:border-yellow-500 transition-all"
-              placeholder="Your name"
-            />
-          </div>
-
-          {/* Email Field */}
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1.5">
-              Email <span className="text-slate-500">(optional)</span>
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50 focus:border-yellow-500 transition-all"
-              placeholder="your.email@example.com"
-            />
-          </div>
-
-          {/* Star Rating */}
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Rating <span className="text-red-400">*</span>
-            </label>
-            <div className="flex gap-2">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  type="button"
-                  onClick={() => setRating(star)}
-                  onMouseEnter={() => setHoverRating(star)}
-                  onMouseLeave={() => setHoverRating(0)}
-                  className="p-1 transition-transform hover:scale-110"
-                >
-                  <Star
-                    className={`w-8 h-8 transition-colors ${star <= (hoverRating || rating)
-                      ? 'text-yellow-400 fill-yellow-400'
-                      : 'text-slate-600'
-                      }`}
-                  />
-                </button>
-              ))}
-              {rating > 0 && (
-                <span className="ml-2 text-slate-400 self-center text-sm">
-                  {rating === 1 && 'Poor'}
-                  {rating === 2 && 'Fair'}
-                  {rating === 3 && 'Good'}
-                  {rating === 4 && 'Very Good'}
-                  {rating === 5 && 'Excellent'}
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Feedback Text */}
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1.5">
-              Your Feedback <span className="text-red-400">*</span>
-            </label>
-            <textarea
-              value={feedback}
-              onChange={(e) => setFeedback(e.target.value)}
-              rows={4}
-              className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50 focus:border-yellow-500 transition-all resize-none"
-              placeholder="Tell us what you think, suggestions for improvement, or any bugs you found..."
-            />
-          </div>
-
-          {/* Error Message */}
-          {error && (
-            <div className="text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-2">
-              {error}
-            </div>
-          )}
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className={`w-full py-3.5 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all ${isSubmitting
-              ? 'bg-slate-700 text-slate-400 cursor-not-allowed'
-              : 'bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-white shadow-lg shadow-yellow-500/20 hover:shadow-yellow-500/30'
-              }`}
-          >
-            {isSubmitting ? (
-              <>
-                <RefreshCw className="w-5 h-5 animate-spin" />
-                Submitting...
-              </>
-            ) : (
-              <>
-                <Send className="w-5 h-5" />
-                Submit Feedback
-              </>
-            )}
-          </button>
-        </form>
-
-        {/* Google Form Config Note */}
-        {GOOGLE_FORM_CONFIG.actionUrl === 'YOUR_GOOGLE_FORM_ACTION_URL_HERE' && (
-          <p className="text-slate-500 text-xs mt-4 text-center">
-            ℹ️ Demo mode - Configure Google Form URL to enable data storage
-          </p>
-        )}
-      </div>
-    </div>
-  );
 };
 
 
@@ -2350,7 +2116,7 @@ const App: React.FC = () => {
                       <li>Real-time data visualization with Oscilloscope.</li>
                     </ul>
                     <p className="text-sm text-slate-500 mt-6 pt-6 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-2">
-                      <span>Developed by Dr. B. I Mario Raja using React, Three.js, and Capacitor.</span>
+                      <span>Developed by Madhukar Venkatesh.</span>
                       <span className="text-[10px] opacity-70 uppercase tracking-widest">v1.5.0 • Mar 18, 2026</span>
                     </p>
                   </div>
