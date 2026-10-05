@@ -2103,7 +2103,7 @@ const App: React.FC = () => {
                     </ul>
                     <p className="text-sm text-slate-500 mt-6 pt-6 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-2">
                       <span>Developed by Madhukar Venkatesh.</span>
-                      <span className="text-[10px] opacity-70 uppercase tracking-widest">v1.5.0 • Mar 18, 2026</span>
+                      <span className="text-[10px] opacity-70 uppercase tracking-widest">v1.5.0 • Oct 05, 2026</span>
                     </p>
                   </div>
                 </div>
@@ -2128,7 +2128,7 @@ const App: React.FC = () => {
                   <div className="space-y-6">
                     <div className="border-l-2 border-green-500 pl-4">
                       <h3 className="text-lg font-semibold text-white">v1.5.0 (Current)</h3>
-                      <p className="text-slate-500 text-sm mb-2">March 18, 2026</p>
+                      <p className="text-slate-500 text-sm mb-2">october 05, 2026</p>
                       <ul className="list-disc list-inside text-slate-300 space-y-1">
                         <li>Realistic Microscope controls — Mechanical stage knobs now match real-world microscopes.</li>
                         <li>Smoother kymograph tracings — Curves are now smooth and traces preserved for comparison.</li>
