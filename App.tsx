@@ -1948,106 +1948,31 @@ const GenesisOfTetanusExperiment: React.FC<{ onBack: () => void }> = ({ onBack }
 
 // --- FEEDBACK MODAL ---
 
-interface FeedbackModalProps {
-  onClose: () => void;
-}
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!feedback.trim()) return setError('Please enter your feedback');
+  if (rating === 0) return setError('Please select a rating');
 
-const FeedbackModal: React.FC<FeedbackModalProps> = ({ onClose }) => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [rating, setRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0);
-  const [feedback, setFeedback] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState('');
+  setIsSubmitting(true);
+  setError('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!feedback.trim()) return setError('Please enter your feedback');
-    if (rating === 0) return setError('Please select a rating');
+  try {
+    const response = await fetch('https://formspree.io/f/xeaeqwev', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, rating, feedback })
+    });
 
-    setIsSubmitting(true);
-    setError('');
-
-    try {
-      // IMPORTANT: Put your Formspree ID right here
-      const response = await fetch('https://formspree.io/f/xeaeqwev', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, rating, feedback })
-      });
-
-      if (response.ok) {
-        setSubmitted(true);
-      } else {
-        setError('Failed to submit feedback.');
-      }
-    } catch (err) {
-      setError('Failed to submit feedback. Please try again.');
-    } finally {
-      setIsSubmitting(false);
+    if (response.ok) {
+      setSubmitted(true);
+    } else {
+      setError('Failed to submit feedback.');
     }
-  };
-
-  if (submitted) {
-    return (
-      <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4">
-        <div className="bg-slate-900 p-8 rounded-2xl max-w-md w-full border border-slate-800 text-center">
-          <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Star className="w-8 h-8 text-green-400 fill-green-400" />
-          </div>
-          <h2 className="text-2xl font-bold text-white mb-2">Thank You!</h2>
-          <p className="text-slate-400 mb-6">Your feedback has been submitted successfully.</p>
-          <button onClick={onClose} className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl transition-colors">
-            Close
-          </button>
-        </div>
-      </div>
-    );
+  } catch (err) {
+    setError('Failed to submit feedback. Please try again.');
+  } finally {
+    setIsSubmitting(false);
   }
-
-  return (
-    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-p-4">
-      <div className="bg-slate-900 p-8 rounded-2xl max-w-lg w-full border border-slate-800 relative max-h-[90vh] overflow-y-auto">
-        <button onClick={onClose} className="absolute top-4 right-4 text-slate-400 hover:text-white">
-          <X className="w-6 h-6" />
-        </button>
-        <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
-          <MessageCircle className="w-6 h-6 text-yellow-500" /> Send Feedback
-        </h2>
-        <p className="text-slate-400 text-sm mb-6">We'd love to hear your thoughts on Virtual Physiology Lab!</p>
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1.5">Name <span className="text-slate-500">(optional)</span></label>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50 focus:border-yellow-500 transition-all" placeholder="Your name" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1.5">Email <span className="text-slate-500">(optional)</span></label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50 focus:border-yellow-500 transition-all" placeholder="your.email@example.com" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Rating <span className="text-red-400">*</span></label>
-            <div className="flex gap-2">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button key={star} type="button" onClick={() => setRating(star)} onMouseEnter={() => setHoverRating(star)} onMouseLeave={() => setHoverRating(0)} className="p-1 transition-transform hover:scale-110">
-                  <Star className={`w-8 h-8 transition-colors ${star <= (hoverRating || rating) ? 'text-yellow-400 fill-yellow-400' : 'text-slate-600'}`} />
-                </button>
-              ))}
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1.5">Your Feedback <span className="text-red-400">*</span></label>
-            <textarea value={feedback} onChange={(e) => setFeedback(e.target.value)} rows={4} className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50 focus:border-yellow-500 transition-all resize-none" placeholder="Tell us what you think..." />
-          </div>
-          {error && <div className="text-red-400 text-sm bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-2">{error}</div>}
-          <button type="submit" disabled={isSubmitting} className={`w-full py-3.5 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all ${isSubmitting ? 'bg-slate-700 text-slate-400 cursor-not-allowed' : 'bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-white shadow-lg shadow-yellow-500/20 hover:shadow-yellow-500/30'}`}>
-            {isSubmitting ? <><RefreshCw className="w-5 h-5 animate-spin" /> Submitting...</> : <><Send className="w-5 h-5" /> Submit Feedback</>}
-          </button>
-        </form>
-      </div>
-    </div>
-  );
 };
 
 
@@ -2098,7 +2023,7 @@ const App: React.FC = () => {
         <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-8 font-sans">
           <div className="max-w-5xl w-full space-y-12">
             <div className="text-center space-y-4 relative">
-              <div className="absolute top-0 right-0 flex gap-2">
+              <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4">
                 <button
                   onClick={() => setShowAbout(true)}
                   className="p-2 text-slate-400 hover:text-white transition-colors"
