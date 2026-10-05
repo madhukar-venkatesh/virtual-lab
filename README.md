@@ -23,7 +23,7 @@ A comprehensive, interactive simulation suite designed for performing and visual
 
 ### Amphibian Skeletal Muscle
 1.  **Simple Muscle Twitch**: Analyze the phases of a single muscle twitch (Latent, Contraction, Relaxation).
-2.  **Effect of Load**: Study the relationship between load and work done producing free and after loaded curves.
+2.  **Effect of Load**: Study the relationship between load and work done producing  and after loaded curves.
 3.  **Effect of Temperature**: Observe how temperature changes affect muscle enzyme activity and twitch duration.
 4.  **Effect of Stimulus Strength**: Demonstrate the "All-or-None" law and graded response in whole muscle.
 5.  **Genesis of Fatigue**: Simulate muscle fatigue through repeated stimulation.
@@ -54,7 +54,7 @@ A comprehensive, interactive simulation suite designed for performing and visual
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/MrNerd96/virtual-lab.git
+    git clone https://github.com/madhukar-venkatesh/virtual-lab.git
     cd virtual-lab
     ```
 

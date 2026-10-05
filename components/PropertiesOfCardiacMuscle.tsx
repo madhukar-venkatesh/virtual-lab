@@ -509,7 +509,7 @@ const FrogHeart = ({ contraction, temperature, onHoverChange, showLigature1, isT
                             <Sphere args={[0.05, 8, 8]} position={[0, SINUS_H + 0.08, 0]}>
                                 <meshStandardMaterial color="#ffffff" roughness={0.9} />
                             </Sphere>
-                            {/* Free Ends of the Knot */}
+                            {/*  Ends of the Knot */}
                             <Tube args={[threadEnd1, 12, 0.025, 6, false]}>
                                 <meshStandardMaterial color="#ffffff" roughness={0.9} />
                             </Tube>
@@ -531,7 +531,7 @@ const FrogHeart = ({ contraction, temperature, onHoverChange, showLigature1, isT
                             <Sphere args={[0.05, 8, 8]} position={[isTight2 ? 0.21 : 0.21, 0, 0]}>
                                 <meshStandardMaterial color="#ffffff" roughness={0.9} />
                             </Sphere>
-                            {/* Free Ends of the Knot */}
+                            {/*  Ends of the Knot */}
                             <Tube args={[threadEnd2_1, 12, 0.02, 6, false]}>
                                 <meshStandardMaterial color="#ffffff" roughness={0.9} />
                             </Tube>

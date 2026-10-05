@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "homepage": "https://MrNerd96.github.io/virtual-lab/",
+  "homepage": "https://madhukar-venkatesh.github.io/virtual-lab/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

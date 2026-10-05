@@ -271,11 +271,11 @@ const LucasChamber = ({ muscleShortening, onHoverChange, stimulationType }: { mu
     );
 };
 
-const AnimatedThumbScrew = ({ mode }: { mode: 'After-Loaded' | 'Free-Loaded' }) => {
+const AnimatedThumbScrew = ({ mode }: { mode: 'After-Loaded' | '-Loaded' }) => {
     const groupRef = useRef<THREE.Group>(null);
     const metalColor = "#c0c0c0";
 
-    const targetY = mode === 'Free-Loaded' ? 0.20 : 0.05;
+    const targetY = mode === '-Loaded' ? 0.20 : 0.05;
 
     useFrame((state, delta) => {
         if (groupRef.current) {
@@ -305,8 +305,8 @@ const StarlingLever = ({ angle, onHoverChange }: { angle: number, onHoverChange?
     const darkBrassColor = "#8b6914";
     const metalColor = "#c0c0c0";
 
-    // In Simple Twitch we treat it as Free-Loaded for visual clarity
-    const mode = 'Free-Loaded';
+    // In Simple Twitch we treat it as -Loaded for visual clarity
+    const mode = '-Loaded';
 
     return (
         <group position={[-0.5, 1.5, 0.1]}>

@@ -293,10 +293,10 @@ const LucasChamber = ({
     );
 };
 
-const AnimatedThumbScrew = ({ mode }: { mode: 'After-Loaded' | 'Free-Loaded' }) => {
+const AnimatedThumbScrew = ({ mode }: { mode: 'After-Loaded' | '-Loaded' }) => {
     const groupRef = useRef<THREE.Group>(null);
     const metalColor = "#c0c0c0";
-    const targetY = mode === 'Free-Loaded' ? 0.20 : 0.05;
+    const targetY = mode === '-Loaded' ? 0.20 : 0.05;
 
     useFrame((state, delta) => {
         if (groupRef.current) {
@@ -325,7 +325,7 @@ const StarlingLever = ({ angle, onHoverChange }: { angle: number, onHoverChange?
     const brassColor = "#b8860b";
     const darkBrassColor = "#8b6914";
     const metalColor = "#c0c0c0";
-    const mode = 'Free-Loaded';
+    const mode = '-Loaded';
 
     return (
         <group position={[-0.5, 1.5, 0.1]}>

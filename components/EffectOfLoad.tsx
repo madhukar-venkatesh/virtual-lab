@@ -26,7 +26,7 @@ interface SimulationState {
 
 interface ExperimentHistory {
     load: number;
-    mode: 'After-Loaded' | 'Free-Loaded';
+    mode: 'After-Loaded' | '-Loaded';
     maxHeight: number;
     work: number;
     id: number;
@@ -60,53 +60,53 @@ const InteractiveObject = ({
 
 // --- Physics Logic ---
 
-const getExtension = (load: number, mode: 'After-Loaded' | 'Free-Loaded') => {
+const getExtension = (load: number, mode: 'After-Loaded' | '-Loaded') => {
     if (mode === 'After-Loaded') return 0;
-    // Free-loaded: Extension proportional to load
+    // -loaded: Extension proportional to load
     // Max load 100g -> max extension ~1.5cm visually
     return (load / MAX_LOAD_G) * 1.5;
 };
 
-const calculatePeakHeight = (load: number, mode: 'After-Loaded' | 'Free-Loaded') => {
+const calculatePeakHeight = (load: number, mode: 'After-Loaded' | '-Loaded') => {
     // Base heights
     const h0_after = 5;
-    const h0_free = 5.5; // Slightly higher base due to initial optimal stretch benefit? or similar.
+    const h0_ = 5.5; // Slightly higher base due to initial optimal stretch benefit? or similar.
 
     // Decay factors
     if (mode === 'After-Loaded') {
         // Linear decay
         return h0_after * Math.max(0, 1 - (load / 120)); // Fails around 120g
     } else {
-        // Free-loaded
+        // -loaded
         // Starling's Law: Initial stretch INCREASES force up to a point, then decreases.
         // However, the load itself OPPOSEs shortening.
-        // Net result in classic graph: Free-loaded height is often HIGHER than after-loaded for moderate loads because the muscle is longer.
+        // Net result in classic graph: -loaded height is often HIGHER than after-loaded for moderate loads because the muscle is longer.
         // But baseline is lower.
         // Let's model it:
         // Strength boost from extension: + (load * 0.02)
         // Drag from load: - (load * ... )
 
         // Simple approx to match image: 
-        // Free-load curve is ABOVE After-load curve for height (amplitude).
+        // -load curve is ABOVE After-load curve for height (amplitude).
 
         const extensionBenefit = (load / 100) * 1.5; // Benefit from stretch
         const loadDrag = (load / 120);
 
         // Resulting height relative to the NEW baseline (so pure contraction amount)
         // The image shows the Peak Absolute Position is higher? Or just the amplitude?
-        // Inset shows: Free-load curve starts lower, but goes HIGHER than after-load peak?
-        // No, Inset shows: Free-load starts lower (if baseline drop shown? Actually Inset diagram is ambiguous on baseline).
+        // Inset shows: -load curve starts lower, but goes HIGHER than after-load peak?
+        // No, Inset shows: -load starts lower (if baseline drop shown? Actually Inset diagram is ambiguous on baseline).
         // WAIT. The Inset shows them starting at SAME baseline. That might be "Isometric" vs "Isotonic"? 
         // PROMPT IMAGE 2 (Step 52): 
-        // Inset: "Free-loaded condition" is the TALLER curve. "After-loaded" is SHORTER.
+        // Inset: "-loaded condition" is the TALLER curve. "After-loaded" is SHORTER.
         // Both start at same line? No, drawn on same axis.
-        // BUT Graph (B) Free-loaded shows dropping baseline.
+        // BUT Graph (B) -loaded shows dropping baseline.
 
         // Conclusion:
-        // 1. Amplitude (Length of line): Free-load > After-load (due to Starling).
-        // 2. Baseline: Free-load drops.
+        // 1. Amplitude (Length of line): -load > After-load (due to Starling).
+        // 2. Baseline: -load drops.
 
-        const baseH = h0_free + extensionBenefit * 2;
+        const baseH = h0_ + extensionBenefit * 2;
         const finalH = baseH * Math.max(0, 1 - (load / 140)); // Stronger, fails later
         return finalH;
     }
@@ -184,16 +184,16 @@ const LucasChamber = ({ muscleShortening, onHoverChange }: { muscleShortening: n
     );
 };
 
-const AnimatedThumbScrew = ({ mode }: { mode: 'After-Loaded' | 'Free-Loaded' }) => {
+const AnimatedThumbScrew = ({ mode }: { mode: 'After-Loaded' | '-Loaded' }) => {
     const groupRef = useRef<THREE.Group>(null);
     const metalColor = "#c0c0c0";
 
     // Target Y position (along the screw axis)
-    // "Moved away" (Free-Loaded) -> Higher Y
+    // "Moved away" (-Loaded) -> Higher Y
     // "Inside" (After-Loaded) -> Lower Y (touching)
     // Note: Original position was Y=0 relative to the rotated group.
-    // If Free-Loaded, move OUT (positive Y local).
-    const targetY = mode === 'Free-Loaded' ? 0.20 : 0.05;
+    // If -Loaded, move OUT (positive Y local).
+    const targetY = mode === '-Loaded' ? 0.20 : 0.05;
 
     useFrame((state, delta) => {
         if (groupRef.current) {
@@ -222,7 +222,7 @@ const AnimatedThumbScrew = ({ mode }: { mode: 'After-Loaded' | 'Free-Loaded' }) 
     );
 };
 
-const StarlingLever = ({ angle, load, onHoverChange, mode }: { angle: number, load: number, onHoverChange?: (l: string | null) => void, mode: 'After-Loaded' | 'Free-Loaded' }) => {
+const StarlingLever = ({ angle, load, onHoverChange, mode }: { angle: number, load: number, onHoverChange?: (l: string | null) => void, mode: 'After-Loaded' | '-Loaded' }) => {
     const brassColor = "#b8860b"; // Dark goldenrod - brass color
     const darkBrassColor = "#8b6914";
     const metalColor = "#c0c0c0"; // Silver metal
@@ -587,7 +587,7 @@ const Kymograph = ({
 
 export const EffectOfLoad: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     const [load, setLoad] = useState(10);
-    const [mode, setMode] = useState<'After-Loaded' | 'Free-Loaded'>('After-Loaded');
+    const [mode, setMode] = useState<'After-Loaded' | '-Loaded'>('After-Loaded');
     const [drumMode, setDrumMode] = useState<'Moving' | 'Stationary'>('Moving');
     const [drumOffset, setDrumOffset] = useState(0);
     const [hoveredLabel, setHoveredLabel] = useState<string | null>(null);
@@ -663,7 +663,7 @@ export const EffectOfLoad: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         };
 
         // Delay lever animation only when going TO After-Loaded (Screw pushing lever)
-        // When going TO Free-Loaded, drop immediately (Gravity)
+        // When going TO -Loaded, drop immediately (Gravity)
         const delay = mode === 'After-Loaded' ? 400 : 0;
 
         const timerId = setTimeout(() => {
@@ -743,7 +743,7 @@ export const EffectOfLoad: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     useEffect(() => {
         if (!simState.isRunning && simState.data.length > 2) {
             const currentHistoryEntry = history[history.length - 1];
-            const strokeColor = currentHistoryEntry && currentHistoryEntry.mode === 'Free-Loaded' ? '#f472b6' : '#4ade80';
+            const strokeColor = currentHistoryEntry && currentHistoryEntry.mode === '-Loaded' ? '#f472b6' : '#4ade80';
             completedCurvesRef.current.push({ data: [...simState.data], color: strokeColor });
         }
     }, [simState.isRunning]);
@@ -800,7 +800,7 @@ export const EffectOfLoad: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         // Draw current active curve smoothly
         if (simState.data.length > 2) {
             const currentHistoryEntry = history[history.length - 1];
-            const strokeColor = currentHistoryEntry && currentHistoryEntry.mode === 'Free-Loaded' ? '#f472b6' : '#4ade80';
+            const strokeColor = currentHistoryEntry && currentHistoryEntry.mode === '-Loaded' ? '#f472b6' : '#4ade80';
             drawSmoothCurve(ctx, simState.data, strokeColor, w, h);
         }
     }, [simState.data, clearKey]); // Re-run when data changes or clearKey triggers a clear
@@ -958,7 +958,7 @@ export const EffectOfLoad: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
                         <div className="flex gap-2 p-1 bg-slate-800 rounded-lg">
                             <button onClick={() => setMode('After-Loaded')} className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${mode === 'After-Loaded' ? 'bg-green-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}>After-Loaded</button>
-                            <button onClick={() => setMode('Free-Loaded')} className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${mode === 'Free-Loaded' ? 'bg-pink-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}>Free-Loaded</button>
+                            <button onClick={() => setMode('-Loaded')} className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${mode === '-Loaded' ? 'bg-pink-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}>-Loaded</button>
                         </div>
 
                         <div className="space-y-3">
