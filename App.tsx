@@ -2023,7 +2023,7 @@ const App: React.FC = () => {
         <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-8 font-sans">
           <div className="max-w-5xl w-full space-y-12">
             <div className="text-center space-y-4 relative">
-              <div className="absolute top-0 right-0 flex gap-2">
+              <div className="absolute top-0 right-0 flex gap-2 z-50">
                 <button
                   onClick={() => setShowAbout(true)}
                   className="p-2 text-slate-400 hover:text-white transition-colors"
