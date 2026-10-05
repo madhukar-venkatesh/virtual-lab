@@ -1972,7 +1972,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({ onClose }) => {
 
     try {
       // IMPORTANT: Put your Formspree ID right here
-      const response = await fetch('https://formspree.io/f/YOUR_ENDPOINT_ID_HERE', {
+      const response = await fetch('https://formspree.io/f/xeaeqwev', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, rating, feedback })
