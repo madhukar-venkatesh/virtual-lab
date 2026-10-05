@@ -2031,20 +2031,6 @@ const App: React.FC = () => {
                 >
                   <Info className="w-6 h-6" />
                 </button>
-                <button
-                  onClick={() => setShowHistory(true)}
-                  className="p-2 text-slate-400 hover:text-white transition-colors"
-                  title="Version History"
-                >
-                  <History className="w-6 h-6" />
-                </button>
-                <button
-                  onClick={() => setShowFeedback(true)}
-                  className="p-2 text-slate-400 hover:text-yellow-400 transition-colors"
-                  title="Send Feedback"
-                >
-                  <MessageCircle className="w-6 h-6" />
-                </button>
               </div>
               <div className="inline-flex items-center justify-center p-3 bg-blue-500/10 rounded-2xl mb-4">
                 <FlaskConical className="w-10 h-10 text-blue-400" />
